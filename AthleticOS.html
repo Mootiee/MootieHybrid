@@ -8,6 +8,122 @@
 <meta name="apple-mobile-web-app-title" content="Athletic OS">
 <meta name="theme-color" content="#000000">
 <title>Athletic OS</title>
+<script>
+// Generate icon as canvas and inject as apple-touch-icon
+(function(){
+  try {
+    const c = document.createElement('canvas');
+    c.width = 512; c.height = 512;
+    const ctx = c.getContext('2d');
+
+    // Background
+    const bg = ctx.createLinearGradient(0,0,512,512);
+    bg.addColorStop(0,'#0a0a0d');
+    bg.addColorStop(1,'#141418');
+    ctx.fillStyle = bg;
+    roundRect(ctx,0,0,512,512,80);
+    ctx.fill();
+
+    // Outer glow ring
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(256,256,200,0,Math.PI*2);
+    ctx.strokeStyle='rgba(200,255,87,0.08)';
+    ctx.lineWidth=32;
+    ctx.stroke();
+    ctx.restore();
+
+    // Inner ring
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(256,256,168,0,Math.PI*2);
+    ctx.strokeStyle='rgba(200,255,87,0.15)';
+    ctx.lineWidth=2;
+    ctx.stroke();
+    ctx.restore();
+
+    // ECG / heartbeat line
+    const pts = [
+      [56,256],[130,256],[158,180],[186,332],
+      [214,160],[242,352],[270,200],[298,256],
+      [326,256],[360,256]
+    ];
+    // Glow
+    ctx.save();
+    ctx.shadowColor='#c8ff57';
+    ctx.shadowBlur=28;
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0],pts[0][1]);
+    for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0],pts[i][1]);
+    // Continue to right
+    ctx.lineTo(456,256);
+    ctx.strokeStyle='#c8ff57';
+    ctx.lineWidth=14;
+    ctx.lineCap='round';
+    ctx.lineJoin='round';
+    ctx.stroke();
+    ctx.restore();
+
+    // Bright core line (no blur)
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0],pts[0][1]);
+    for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0],pts[i][1]);
+    ctx.lineTo(456,256);
+    ctx.strokeStyle='#e8ffaa';
+    ctx.lineWidth=5;
+    ctx.lineCap='round';
+    ctx.lineJoin='round';
+    ctx.stroke();
+    ctx.restore();
+
+    // Pulse dot at peak
+    ctx.save();
+    ctx.shadowColor='#c8ff57';
+    ctx.shadowBlur=30;
+    ctx.beginPath();
+    ctx.arc(214,160,10,0,Math.PI*2);
+    ctx.fillStyle='#c8ff57';
+    ctx.fill();
+    ctx.restore();
+
+    // "AOS" text bottom
+    ctx.save();
+    ctx.font='bold 52px system-ui';
+    ctx.fillStyle='rgba(200,255,87,0.7)';
+    ctx.textAlign='center';
+    ctx.letterSpacing='8px';
+    ctx.fillText('ATHLETIC OS',256,420);
+    ctx.restore();
+
+    // Inject as link tag
+    const link = document.createElement('link');
+    link.rel = 'apple-touch-icon';
+    link.href = c.toDataURL('image/png');
+    document.head.appendChild(link);
+
+    const link2 = document.createElement('link');
+    link2.rel = 'icon';
+    link2.href = c.toDataURL('image/png');
+    document.head.appendChild(link2);
+
+  } catch(e){}
+
+  function roundRect(ctx,x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.lineTo(x+w-r,y);
+    ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+    ctx.lineTo(x+w,y+h-r);
+    ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    ctx.lineTo(x+r,y+h);
+    ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+    ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y);
+    ctx.closePath();
+  }
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
