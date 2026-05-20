@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mootie Prime</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&family=Instrument+Serif:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06060c;
+  --s1:#0c0c16;
+  --s2:#111120;
+  --s3:#16162a;
+  --border:rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.12);
+  --text:#eeeef8;
+  --muted:#58587a;
+  --muted2:#38385a;
+  --orange:#ff5c1a;
+  --cyan:#00d4ff;
+  --green:#00e676;
+  --purple:#8b5cf6;
+  --pink:#f472b6;
+  --yellow:#f59e0b;
+  --blue:#3b82f6;
+  --red:#ef4444;
+  --gold:#d4a017;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;overflow-x:hidden;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 70% 0%,rgba(139,92,246,0.07),transparent),radial-gradient(ellipse 40% 30% at 10% 80%,rgba(255,92,26,0.05),transparent);pointer-events:none;z-index:0}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar{
+  position:fixed;left:0;top:0;bottom:0;width:200px;
+  background:var(--s1);border-right:1px solid var(--border);
+  z-index:200;display:flex;flex-direction:column;
+  overflow-y:auto;scrollbar-width:none;
+}
+.sidebar::-webkit-scrollbar{display:none}
+.sb-logo{padding:20px 16px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-logo-name{font-family:'Instrument Serif',serif;font-size:20px;font-weight:700;letter-spacing:-0.5px;display:flex;align-items:baseline;gap:4px}
+.sb-logo-name span{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--orange);letter-spacing:1px}
+.sb-logo-sub{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.sb-profile{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center}
+.sb-avatar{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--orange),var(--purple));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.sb-profile-info{flex:1;min-width:0}
+.sb-profile-name{font-size:12px;font-weight:600}
+.sb-profile-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-section{padding:8px 12px 4px;flex-shrink:0}
+.sb-label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);padding:0 4px;margin-bottom:4px}
+.sb-btn{display:flex;align-items:center;gap:8px;width:100%;padding:7px 8px;border-radius:6px;border:none;background:none;color:var(--muted);font-family:'Syne',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;text-align:left}
+.sb-btn:hover{background:var(--s2);color:var(--text)}
+.sb-btn.active{background:rgba(139,92,246,0.15);color:var(--purple);border:1px solid rgba(139,92,246,0.2)}
+.sb-btn .dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.sb-divider{height:1px;background:var(--border);margin:6px 12px}
+
+/* ═══ MAIN ═══ */
+.main{margin-left:200px;position:relative;z-index:1;min-height:100vh}
+.page{display:none;padding:28px 32px;animation:fadeUp .25s ease}
+.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ HEADERS ═══ */
+.ph{margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.ph-eye{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--orange);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.ph-eye::before{content:'';width:20px;height:1px;background:var(--orange)}
+.ph-title{font-family:'Instrument Serif',serif;font-size:38px;font-weight:700;letter-spacing:-1px;line-height:1.05;margin-bottom:6px}
+.ph-title em{font-style:italic;color:var(--orange)}
+.ph-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);line-height:1.7}
+.sec{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:24px 0 12px;display:flex;align-items:center;gap:10px}
+.sec::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ═══ CARDS ═══ */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:16px;transition:border-color .2s}
+.card:hover{border-color:var(--border2)}
+.card2{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:13px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.grid-auto{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+
+/* ═══ STAT ═══ */
+.stat{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:14px}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.stat-val{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:500;line-height:1;margin-bottom:3px}
+.stat-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted)}
+
+/* ═══ TIMELINE ═══ */
+.tl{display:flex;flex-direction:column;gap:3px}
+.tl-row{display:grid;grid-template-columns:64px 1fr;gap:0}
+.tl-row::before{display:none}
+.tl-time{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);padding:13px 10px 0 0;text-align:right;line-height:1}
+.tl-box{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:11px 14px;margin-bottom:3px;position:relative;transition:border-color .2s}
+.tl-box:hover{border-color:var(--border2)}
+.tl-dot{position:absolute;left:-5px;top:50%;transform:translateY(-50%);width:7px;height:7px;border-radius:50%;border:1.5px solid var(--bg)}
+.tl-h{font-size:12px;font-weight:600;margin-bottom:2px}
+.tl-d{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);line-height:1.6}
+.tl-tags{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+.tag{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;padding:2px 6px;border-radius:4px}
+
+/* ═══ DAY CARD ═══ */
+.day-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;margin-bottom:8px;overflow:hidden;cursor:pointer;transition:border-color .2s}
+.day-card:hover{border-color:var(--border2)}
+.day-card-h{display:flex;align-items:center;gap:12px;padding:14px 16px}
+.day-pill{width:44px;height:44px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:1px;flex-shrink:0;line-height:1.2}
+.day-info{flex:1}
+.day-info h3{font-size:13px;font-weight:700;margin-bottom:2px}
+.day-info p{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)}
+.day-badges{display:flex;gap:5px;flex-wrap:wrap}
+.badge{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 8px;border-radius:20px;border:1px solid}
+
+/* ═══ MEAL ═══ */
+.meal{background:var(--s1);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;overflow:hidden}
+.meal-h{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer}
+.meal-h:active{background:var(--s2)}
+.meal-time{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;padding:3px 8px;border-radius:4px}
+.meal-name{flex:1;font-size:13px;font-weight:600}
+.meal-kcal{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)}
+.meal-chev{color:var(--muted);font-size:10px;transition:transform .2s}
+.meal.open .meal-chev{transform:rotate(180deg)}
+.meal-body{display:none;padding:0 14px 12px;border-top:1px solid var(--border)}
+.meal.open .meal-body{display:block}
+.meal-item{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:10px}
+.meal-item:last-child{border:none}
+.meal-item span{color:var(--muted)}
+.meal-total{display:flex;justify-content:space-between;font-size:11px;font-weight:600;padding-top:8px;border-top:1px solid var(--border2);margin-top:6px}
+
+/* ═══ SUPP ═══ */
+.supp{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:14px}
+.supp-time{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.supp-name{font-size:13px;font-weight:700;margin-bottom:4px}
+.supp-dose{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:6px}
+.supp-why{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);line-height:1.6}
+
+/* ═══ PROGRESS BAR ═══ */
+.prog-wrap{margin-bottom:12px}
+.prog-h{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;margin-bottom:5px}
+.prog-h span{color:var(--muted)}
+.prog-bg{height:5px;background:var(--s3);border-radius:5px;overflow:hidden}
+.prog-fill{height:100%;border-radius:5px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+
+/* ═══ ALERT BOX ═══ */
+.alert{border-radius:10px;padding:12px 14px;margin-bottom:10px;font-family:'JetBrains Mono',monospace;font-size:10px;line-height:1.7}
+.alert strong{font-family:'Syne',sans-serif;font-size:11px}
+.alert-warn{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);color:rgba(245,158,11,0.8)}
+.alert-danger{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:rgba(239,68,68,0.8)}
+.alert-info{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:rgba(59,130,246,0.7)}
+.alert-success{background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.2);color:rgba(0,230,118,0.7)}
+
+/* ═══ SCREEN TIME SYSTEM ═══ */
+.screen-block{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:8px}
+.screen-block-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.screen-block-title{font-size:13px;font-weight:700}
+.screen-time-val{font-family:'JetBrains Mono',monospace;font-size:11px}
+.screen-rule{display:flex;gap:12px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:10px}
+.screen-rule:last-child{border:none}
+.screen-rule-time{color:var(--orange);width:80px;flex-shrink:0}
+.screen-rule-text{color:var(--muted);line-height:1.6}
+
+/* ═══ FINANCE TABLE ═══ */
+.fin-table{width:100%;border-collapse:collapse}
+.fin-table th{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:8px 0;text-align:left;border-bottom:1px solid var(--border)}
+.fin-table td{font-family:'JetBrains Mono',monospace;font-size:11px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.02)}
+.fin-table .amt{text-align:right;font-weight:500}
+.fin-table tr.total td{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;border-top:1px solid var(--border2);border-bottom:none;padding-top:12px}
+
+/* ═══ RULE ROWS ═══ */
+.rule-row{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)}
+.rule-row:last-child{border:none}
+.rule-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--orange);width:28px;flex-shrink:0;padding-top:1px}
+.rule-title{font-size:13px;font-weight:600;margin-bottom:4px}
+.rule-text{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);line-height:1.7}
+
+/* ═══ WEEK OVERVIEW ═══ */
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:20px}
+.wday{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .2s}
+.wday:hover{transform:translateY(-2px);border-color:var(--border2)}
+.wday-name{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.wday-type{font-size:10px;font-weight:700;margin-bottom:6px}
+.wday-dot{width:6px;height:6px;border-radius:50%;margin:0 auto 6px}
+.wday-screen{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted)}
+
+/* ═══ CREATOR ═══ */
+.content-card{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px}
+.content-card-h{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.content-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);width:24px}
+.content-title{font-size:13px;font-weight:700;flex:1;margin-left:8px}
+.content-desc{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);line-height:1.7;margin-left:32px}
+.content-tags{display:flex;gap:5px;margin-top:8px;margin-left:32px;flex-wrap:wrap}
+
+/* ═══ INSTAGRAM REELS ═══ */
+.reels-warning{background:linear-gradient(135deg,rgba(239,68,68,0.1),rgba(245,158,11,0.05));border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:16px;margin-bottom:16px}
+.reels-warning h3{font-size:14px;font-weight:700;color:var(--red);margin-bottom:8px}
+.reels-warning p{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(239,68,68,0.7);line-height:1.8}
+
+/* ═══ OKUL SYSTEM ═══ */
+.okul-block{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
+.okul-block h3{font-size:14px;font-weight:700;margin-bottom:12px}
+
+/* MOBILE */
+@media(max-width:768px){
+  .sidebar{width:100%;height:auto;position:relative;padding-bottom:8px}
+  .main{margin-left:0}
+  .grid4,.grid3{grid-template-columns:1fr 1fr}
+  .week-grid{grid-template-columns:repeat(4,1fr)}
+  .ph-title{font-size:28px}
+}
+
+.divider{height:1px;background:var(--border);margin:20px 0}
+.flex-between{display:flex;justify-content:space-between;align-items:center}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-name">Mootie <span>PRIME</span></div>
+    <div class="sb-logo-sub">Personal OS v2.0</div>
+  </div>
+  <div class="sb-profile">
+    <div class="sb-avatar">M</div>
+    <div class="sb-profile-info">
+      <div class="sb-profile-name">Mootie</div>
+      <div class="sb-profile-sub">24 · 72kg · Hybrid Athlete</div>
+    </div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-label">Ana Sistem</div>
+    <button class="sb-btn active" onclick="go('dashboard',this)"><div class="dot" style="background:var(--purple)"></div>Dashboard</button>
+    <button class="sb-btn" onclick="go('rules',this)"><div class="dot" style="background:var(--orange)"></div>Sistem Kuralları</button>
+    <button class="sb-btn" onclick="go('screen',this)"><div class="dot" style="background:var(--red)"></div>Ekran & Reels</button>
+  </div>
+
+  <div class="sb-divider"></div>
+  <div class="sb-section">
+    <div class="sb-label">Haftalık Plan</div>
+    <button class="sb-btn" onclick="go('mon',this)"><div class="dot" style="background:var(--red)"></div>Pzt — Push</button>
+    <button class="sb-btn" onclick="go('tue',this)"><div class="dot" style="background:var(--cyan)"></div>Sal — Easy Run</button>
+    <button class="sb-btn" onclick="go('wed',this)"><div class="dot" style="background:var(--orange)"></div>Çar — Pull</button>
+    <button class="sb-btn" onclick="go('thu',this)"><div class="dot" style="background:var(--pink)"></div>Per — Interval</button>
+    <button class="sb-btn" onclick="go('fri',this)"><div class="dot" style="background:var(--green)"></div>Cum — Leg</button>
+    <button class="sb-btn" onclick="go('sat',this)"><div class="dot" style="background:var(--blue)"></div>Cmt — Long Run</button>
+    <button class="sb-btn" onclick="go('sun',this)"><div class="dot" style="background:var(--muted)"></div>Paz — Rest</button>
+  </div>
+
+  <div class="sb-divider"></div>
+  <div class="sb-section">
+    <div class="sb-label">Sistem</div>
+    <button class="sb-btn" onclick="go('nutrition',this)"><div class="dot" style="background:var(--yellow)"></div>Beslenme</button>
+    <button class="sb-btn" onclick="go('supplements',this)"><div class="dot" style="background:var(--green)"></div>Supplement</button>
+    <button class="sb-btn" onclick="go('finance',this)"><div class="dot" style="background:var(--gold)"></div>Finans</button>
+    <button class="sb-btn" onclick="go('creator',this)"><div class="dot" style="background:var(--purple)"></div>Creator</button>
+    <button class="sb-btn" onclick="go('okul',this)"><div class="dot" style="background:var(--blue)"></div>Okul Sistemi</button>
+    <button class="sb-btn" onclick="go('social',this)"><div class="dot" style="background:var(--pink)"></div>Sosyal Hayat</button>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- ═══ DASHBOARD ═══ -->
+<div class="page active" id="page-dashboard">
+  <div class="ph">
+    <div class="ph-eye">Personal Operating System</div>
+    <div class="ph-title">Mootie <em>Prime</em></div>
+    <div class="ph-sub">24 yaş · 175cm · 72kg · Maltepe Üniv. · Hybrid Athlete · Creator</div>
+  </div>
+
+  <div class="alert alert-danger" style="margin-bottom:16px">
+    <strong>⚠️ Kritik Uyarı — Instagram Reels</strong><br>
+    Günde 6 saat scroll = haftada 42 saat = aylık 168 saat boşa harcanan zaman. Bu sigaranın dijital versiyonu. Sistem bu saati %90 kesiyor.
+  </div>
+
+  <div class="sec">Başlangıç Profili</div>
+  <div class="grid4" style="margin-bottom:16px">
+    <div class="stat"><div class="stat-label">HRV Baseline</div><div class="stat-val" style="color:var(--green)">91ms</div><div class="stat-sub">Elite seviye</div></div>
+    <div class="stat"><div class="stat-label">VO₂ Max</div><div class="stat-val" style="color:var(--cyan)">53.6</div><div class="stat-sub">Excellent sınırı</div></div>
+    <div class="stat"><div class="stat-label">RHR</div><div class="stat-val" style="color:var(--orange)">52</div><div class="stat-sub">Mükemmel</div></div>
+    <div class="stat"><div class="stat-label">Sigara</div><div class="stat-val" style="color:var(--green)">✗</div><div class="stat-sub">15. gün</div></div>
+  </div>
+
+  <div class="sec">Haftalık Program</div>
+  <div class="week-grid">
+    <div class="wday" onclick="go('mon',null)"><div class="wday-name">Pzt</div><div class="wday-type" style="color:var(--red)">Push</div><div class="wday-dot" style="background:var(--red)"></div><div class="wday-screen">45dk</div></div>
+    <div class="wday" onclick="go('tue',null)"><div class="wday-name">Sal</div><div class="wday-type" style="color:var(--cyan)">Easy Run</div><div class="wday-dot" style="background:var(--cyan)"></div><div class="wday-screen">45dk</div></div>
+    <div class="wday" onclick="go('wed',null)"><div class="wday-name">Çar</div><div class="wday-type" style="color:var(--orange)">Pull</div><div class="wday-dot" style="background:var(--orange)"></div><div class="wday-screen">45dk</div></div>
+    <div class="wday" onclick="go('thu',null)"><div class="wday-name">Per</div><div class="wday-type" style="color:var(--pink)">Interval</div><div class="wday-dot" style="background:var(--pink)"></div><div class="wday-screen">45dk</div></div>
+    <div class="wday" onclick="go('fri',null)"><div class="wday-name">Cum</div><div class="wday-type" style="color:var(--green)">Leg</div><div class="wday-dot" style="background:var(--green)"></div><div class="wday-screen">45dk</div></div>
+    <div class="wday" onclick="go('sat',null)"><div class="wday-name">Cmt</div><div class="wday-type" style="color:var(--blue)">Long Run</div><div class="wday-dot" style="background:var(--blue)"></div><div class="wday-screen">45dk</div></div>
+    <div class="wday" onclick="go('sun',null)"><div class="wday-name">Paz</div><div class="wday-type" style="color:var(--muted)">Rest</div><div class="wday-dot" style="background:var(--muted)"></div><div class="wday-screen">60dk</div></div>
+  </div>
+
+  <div class="sec">Günlük Sabitler</div>
+  <div class="grid4" style="margin-bottom:16px">
+    <div class="stat"><div class="stat-label">Kalkış</div><div class="stat-val" style="color:var(--orange)">06:00</div><div class="stat-sub">İstisna yok</div></div>
+    <div class="stat"><div class="stat-label">Antrenman</div><div class="stat-val" style="color:var(--red)">06:45</div><div class="stat-sub">Pre-workout 06:15</div></div>
+    <div class="stat"><div class="stat-label">Yatış</div><div class="stat-val" style="color:var(--purple)">22:00</div><div class="stat-sub">Ekran 21:00'de</div></div>
+    <div class="stat"><div class="stat-label">Kalori</div><div class="stat-val" style="color:var(--yellow)">2800</div><div class="stat-sub">kcal/gün</div></div>
+    <div class="stat"><div class="stat-label">Protein</div><div class="stat-val" style="color:var(--green)">180g</div><div class="stat-sub">günlük</div></div>
+    <div class="stat"><div class="stat-label">Su</div><div class="stat-val" style="color:var(--cyan)">2.5L</div><div class="stat-sub">minimum</div></div>
+    <div class="stat"><div class="stat-label">Scroll Limiti</div><div class="stat-val" style="color:var(--red)">45dk</div><div class="stat-sub">6 saatten → 45dk</div></div>
+    <div class="stat"><div class="stat-label">Deep Sleep</div><div class="stat-val" style="color:var(--blue)">90dk</div><div class="stat-sub">hedef</div></div>
+  </div>
+
+  <div class="sec">Su Protokolü — Her Gün</div>
+  <div class="grid-auto" style="margin-bottom:16px">
+    <div class="card2" style="display:flex;gap:10px;align-items:center"><div style="font-size:18px">💧</div><div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:3px">06:00 — Kalkış</div><div style="font-size:12px;font-weight:600">500ml — oda sıcaklığı</div></div></div>
+    <div class="card2" style="display:flex;gap:10px;align-items:center"><div style="font-size:18px">💧</div><div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:3px">06:45 — Antrenman başı</div><div style="font-size:12px;font-weight:600">300ml pre-workout</div></div></div>
+    <div class="card2" style="display:flex;gap:10px;align-items:center"><div style="font-size:18px">💧</div><div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:3px">Antrenman sırası</div><div style="font-size:12px;font-weight:600">500ml yavaş yavaş</div></div></div>
+    <div class="card2" style="display:flex;gap:10px;align-items:center"><div style="font-size:18px">💧</div><div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:3px">08:30 — Post-workout</div><div style="font-size:12px;font-weight:600">400ml protein ile</div></div></div>
+    <div class="card2" style="display:flex;gap:10px;align-items:center"><div style="font-size:18px">💧</div><div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:3px">11:00 + 13:00 + 16:00</div><div style="font-size:12px;font-weight:600">300ml × 3</div></div></div>
+    <div class="card2" style="display:flex;gap:10px;align-items:center"><div style="font-size:18px">🚫</div><div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:3px">20:30'dan sonra</div><div style="font-size:12px;font-weight:600">Su kesiliyor</div></div></div>
+  </div>
+</div>
+
+<!-- ═══ SİSTEM KURALLARI ═══ -->
+<div class="page" id="page-rules">
+  <div class="ph">
+    <div class="ph-eye">Protokol</div>
+    <div class="ph-title">Sistem <em>Kuralları</em></div>
+    <div class="ph-sub">Pazarlık yok. İstisna yok. Bunlar kural, tavsiye değil.</div>
+  </div>
+
+  <div class="alert alert-danger">
+    <strong>Sigara — Sıfır Tolerans</strong><br>
+    15 gün oldu. HRV 75'ten 91'e çıktı. RHR 57'den 52'ye düştü. Bu ikisi doğrudan sigara bırakmanın etkisi. Bir tane içersen bu kazanımların %60'ını 72 saat içinde kaybedersin. Bahane kabul edilmiyor.
+  </div>
+
+  <div class="sec">Uyku Kuralları</div>
+  <div class="card" style="margin-bottom:12px">
+    <div class="rule-row"><div class="rule-num">01</div><div><div class="rule-title">22:00 yatış — mutlak</div><div class="rule-text">Sosyal plan, film, sohbet — hiçbiri bu saati geçiremez. Pazar hariç (07:00'e kadar). Uykuya dalma süreni 15-20dk olduğu için 21:45'te yatakta olman lazım.</div></div></div>
+    <div class="rule-row"><div class="rule-num">02</div><div><div class="rule-title">21:00 — Ekran tamamen kapanır</div><div class="rule-text">Telefon, bilgisayar, TV. Mavi ışık melatonin üretimini engelliyor. Deep Sleep şu an 50dk — hedef 90dk. Bu tek kural Deep Sleep'i 20dk artırır.</div></div></div>
+    <div class="rule-row"><div class="rule-num">03</div><div><div class="rule-title">21:15 — Magnezyum + son su</div><div class="rule-text">Magnezyum Glisinat 300mg. Sonra su kesiliyor — gece uyanmaları engellemek için.</div></div></div>
+    <div class="rule-row"><div class="rule-num">04</div><div><div class="rule-title">Oda koşulları sabit</div><div class="rule-text">18-20°C · tam karanlık · sessiz. Bu üçü Deep Sleep için bilimsel olarak kanıtlanmış. Sıcak oda en büyük Deep Sleep katili.</div></div></div>
+    <div class="rule-row"><div class="rule-num">05</div><div><div class="rule-title">Telefon yatakta yok</div><div class="rule-text">Masada değil, fiziksel olarak başka odada. Masada durması yetmez. Gözden kaybolması lazım.</div></div></div>
+  </div>
+
+  <div class="sec">Kahve Kuralları</div>
+  <div class="card" style="margin-bottom:12px">
+    <div class="rule-row"><div class="rule-num">01</div><div><div class="rule-title">Sabah kahvesi 06:30-07:00 arası</div><div class="rule-text">Uyanıştan 30-60dk sonra kahve iç. Kortizol en yüksek seviyedeyken kahve içmek etkisini azaltır. 06:30 optimal pencere.</div></div></div>
+    <div class="rule-row"><div class="rule-num">02</div><div><div class="rule-title">Son kahve 14:00</div><div class="rule-text">Kafein yarı ömrü 5-6 saat. 14:00'deki kahve 22:00'de hâlâ sisteminde var. Bu Deep Sleep'i doğrudan kesiyor.</div></div></div>
+    <div class="rule-row"><div class="rule-num">03</div><div><div class="rule-title">Haftada 3 dışarı, 4 ev</div><div class="rule-text">Pzt + Çar + Cum dışarı kahve (200₺/gün). Diğer günler ev kahvesi (15₺/gün). Aylık tasarruf: ~3.300₺.</div></div></div>
+    <div class="rule-row"><div class="rule-num">04</div><div><div class="rule-title">Günde maksimum 2 kahve</div><div class="rule-text">İkinci kahve en geç 12:00-13:00 arası. Kafein toleransını düşük tut — etkisi azalmıyor.</div></div></div>
+  </div>
+
+  <div class="sec">Antrenman Kuralları</div>
+  <div class="card">
+    <div class="rule-row"><div class="rule-num">01</div><div><div class="rule-title">HRV &lt; 55 → yoğunluk %70</div><div class="rule-text">Vücut söylüyor, dinle. Düşük HRV günü tam gaz antrenman yapmak overreaching'e götürür.</div></div></div>
+    <div class="rule-row"><div class="rule-num">02</div><div><div class="rule-title">Zone 2'de BPM 150+ = yavaşla</div><div class="rule-text">Easy Run ve Long Run'da 150 BPM sınır. Geçince yürüyüşe geç. Ego bırak. Zone 2 adaptasyonu zamanla gelir.</div></div></div>
+    <div class="rule-row"><div class="rule-num">03</div><div><div class="rule-title">Leg Day ertesi Long Run → dikkat</div><div class="rule-text">Cuma Leg Day, Cumartesi Long Run. Bacaklar yorgunsa pace düşür, BPM'e bak. Zorlamak sakatlık riski.</div></div></div>
+    <div class="rule-row"><div class="rule-num">04</div><div><div class="rule-title">Her antrenman sonrası veri kaydet</div><div class="rule-text">Apple Watch verilerini hub'a gir. Haftalık trend takibi için kritik.</div></div></div>
+  </div>
+</div>
+
+<!-- ═══ EKRAN & REELS ═══ -->
+<div class="page" id="page-screen">
+  <div class="ph">
+    <div class="ph-eye">Dijital Disiplin</div>
+    <div class="ph-title">Ekran & <em>Reels</em></div>
+    <div class="ph-sub">6 saat scroll → 45 dakika. Kalan 5.25 saat sana geri dönüyor.</div>
+  </div>
+
+  <div class="reels-warning">
+    <h3>Instagram Reels — Dopamin Tuzağı Analizi</h3>
+    <p>
+      Her 15 saniyede yeni içerik = dopamin spike = tolerans artışı = daha fazla istek.<br>
+      Algoritma seni tanıyor. Sana özel feed kurdu. Bu rastgele değil, bağımlılık mühendisliği.<br><br>
+      Sigara bıraktın. Şu an aynı dopamin boşluğunu Reels dolduruyor.<br>
+      Mekanizma birebir aynı. Sadece daha sosyal kabul gören bir bağımlılık.<br><br>
+      Creator olarak Reels'i <strong style="color:var(--red)">tüketmek için değil, üretmek için</strong> kullanacaksın.
+    </p>
+  </div>
+
+  <div class="sec">Günlük Ekran Zaman Sistemi</div>
+  <div class="screen-block">
+    <div class="screen-block-h"><div class="screen-block-title">📱 Instagram Kuralları</div><div class="screen-time-val" style="color:var(--red)">Günlük maks: 45dk</div></div>
+    <div class="screen-rule"><div class="screen-rule-time">06:00-09:00</div><div class="screen-rule-text">Tamamen kapalı. Sabah rutini, antrenman, post-workout — telefon yok.</div></div>
+    <div class="screen-rule"><div class="screen-rule-time">09:00-10:00</div><div class="screen-rule-text">Creator modu — sadece kendi içerik paylaşımı ve yorum yanıtlama. Scroll yok.</div></div>
+    <div class="screen-rule"><div class="screen-rule-time">10:00-13:00</div><div class="screen-rule-text">Odak bloğu — uygulama kilitli. Screen Time ile otomatik limit.</div></div>
+    <div class="screen-rule"><div class="screen-rule-time">13:00-13:20</div><div class="screen-rule-text">20 dakika izin — bu günlük scroll hakkının yarısı. Bilinçli kullan.</div></div>
+    <div class="screen-rule"><div class="screen-rule-time">13:20-17:00</div><div class="screen-rule-text">Odak/serbest blok — uygulama kilitli.</div></div>
+    <div class="screen-rule"><div class="screen-rule-time">17:00-17:25</div><div class="screen-rule-text">25 dakika izin — günlük limitin kalanı.</div></div>
+    <div class="screen-rule"><div class="screen-rule-time">17:25-21:00</div><div class="screen-rule-text">Creator üretim modu veya tamamen kapalı.</div></div>
+    <div class="screen-rule"><div class="screen-rule-time">21:00+</div><div class="screen-rule-text">Tüm sosyal medya kapalı. İstisna yok.</div></div>
+  </div>
+
+  <div class="screen-block">
+    <div class="screen-block-h"><div class="screen-block-title">📺 YouTube Kuralları</div><div class="screen-time-val" style="color:var(--yellow)">Günlük maks: 60dk</div></div>
+    <div class="screen-rule"><div class="screen-rule-time">Üretim</div><div class="screen-rule-text">Sınırsız — edit, upload, analitik. Bu iş zamanı.</div></div>
+    <div class="screen-rule"><div class="screen-rule-time">Öğrenme</div><div class="screen-rule-text">Öğrenme bloğunda 60dk. Spor bilimi, creator strateji, finans — bilinçli seçim.</div></div>
+    <div class="screen-rule"><div class="screen-rule-time">Shorts scroll</div><div class="screen-rule-text">Reels kuralıyla aynı. Shorts = Reels. Aynı mekanizma.</div></div>
+  </div>
+
+  <div class="sec">iPhone Screen Time Kurulum</div>
+  <div class="card">
+    <div class="rule-row"><div class="rule-num">01</div><div><div class="rule-title">Ayarlar → Ekran Süresi → Uygulama Limitleri</div><div class="rule-text">Instagram: 45dk/gün · TikTok (varsa): 0dk · YouTube: 60dk/gün (üretim hariç)</div></div></div>
+    <div class="rule-row"><div class="rule-num">02</div><div><div class="rule-title">Kesinti Süresi</div><div class="rule-text">06:00-09:00: tüm sosyal medya kilitli<br>21:00-06:00: tüm sosyal medya kilitli</div></div></div>
+    <div class="rule-row"><div class="rule-num">03</div><div><div class="rule-title">Şifreyi kendin koyma</div><div class="rule-text">Güvendiğin birine koy — ya da rastgele karakter kullan ve kaydet. Kendine limit koyup kendini açarsan sistem işe yaramaz.</div></div></div>
+    <div class="rule-row"><div class="rule-num">04</div><div><div class="rule-title">Haftalık rapor</div><div class="rule-text">Her Pazar ekran süresi raporunu al, bana gönder. Trend takibi yapıyorum.</div></div></div>
+  </div>
+
+  <div class="sec">Boşluk Doldurma Sistemi</div>
+  <div class="alert alert-info">
+    <strong>Reels scrollu ne dolduracak?</strong><br>
+    Boşluk gerçek. Bunu görmezden gelmek sistemi çökertir. Reels yerine şunları koy:<br>
+    — Öğrenme bloğu (YouTube eğitim içeriği)<br>
+    — 10-15dk yürüyüş (mental reset)<br>
+    — Podcast (antrenman analizleri, spor bilimi)<br>
+    — Kitap (fiziksel, ekransız)<br>
+    — Creator içerik planlaması (üreterek tüket)
+  </div>
+</div>
+
+<!-- ═══ PAZARTESİ ═══ -->
+<div class="page" id="page-mon">
+  <div class="ph">
+    <div class="ph-eye">Pazartesi</div>
+    <div class="ph-title">Push <em>Day</em></div>
+    <div class="ph-sub">Göğüs · Omuz · Triceps · Creator Bloğu · Dışarı Kahve</div>
+  </div>
+
+  <div class="day-card" style="border-left:3px solid var(--red);margin-bottom:16px">
+    <div class="day-card-h">
+      <div class="day-pill" style="background:rgba(239,68,68,0.12);color:var(--red)">PZT</div>
+      <div class="day-info"><h3>Push Day</h3><p>RPE hedef 7-8 · Dışarı kahve günü</p></div>
+      <div class="day-badges">
+        <div class="badge" style="border-color:rgba(239,68,68,0.3);color:var(--red)">GYM</div>
+        <div class="badge" style="border-color:rgba(245,158,11,0.3);color:var(--yellow)">KAHVE</div>
+        <div class="badge" style="border-color:rgba(139,92,246,0.3);color:var(--purple)">CREATOR</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">Saat Saat Plan</div>
+  <div class="tl">
+    <div class="tl-row"><div class="tl-time">06:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-h">Kalkış — Telefona bakma</div><div class="tl-d">Direkt mutfak. 500ml su iç. Vücut 8 saat dehidrate kaldı.</div><div class="tl-tags"><div class="tag" style="background:rgba(0,212,255,0.1);color:var(--cyan)">500ml su</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">06:15</div><div class="tl-box"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-h">🥞 Protein Pankek + Kreatin</div><div class="tl-d">50g pankek tozu + 70ml süt · Üstüne: yarım muz (40g) + çilek (30g) + bal (5g) · Kreatin 5g suyla al</div><div class="tl-tags"><div class="tag" style="background:rgba(245,158,11,0.1);color:var(--yellow)">272 kcal</div><div class="tag" style="background:rgba(0,230,118,0.1);color:var(--green)">16g pro</div><div class="tag" style="background:rgba(0,230,118,0.1);color:var(--green)">Kreatin 5g</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">06:30</div><div class="tl-box"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-h">☕ Sabah Kahvesi</div><div class="tl-d">Kortizol penceresi — 06:30 optimal. Ev kahvesi veya çıkarken al. İkinci kahve en geç 13:00.</div></div></div>
+    <div class="tl-row"><div class="tl-time">06:45</div><div class="tl-box"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-h">🏋️ Push Day Başlar</div><div class="tl-d">5dk dinamik ısınma · Incline Bench 4×6-8 → Flat Press 3×8-10 → OHP 3×6-8 → Lateral Raise 3×12-15 → Dips 3×8-10</div><div class="tl-tags"><div class="tag" style="background:rgba(239,68,68,0.1);color:var(--red)">~85 dk</div><div class="tag" style="background:rgba(239,68,68,0.1);color:var(--red)">RPE 7-8</div><div class="tag" style="background:rgba(0,212,255,0.1);color:var(--cyan)">500ml su</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">08:10</div><div class="tl-box"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-h">Soğuma + Esneme + Duş</div><div class="tl-d">5dk esneme · Duş sonunda 30sn soğuk su</div></div></div>
+    <div class="tl-row"><div class="tl-time">08:30</div><div class="tl-box"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-h">🥣 Post-Workout — Yoğurt Karışımı</div><div class="tl-d">Yulaf 40g · Whey 25g · Yoğurt 150g · Muz 80g · Yaban mersini 30g · Bal 10g · Tarçın · Omega-3 + D3K2 şimdi al</div><div class="tl-tags"><div class="tag" style="background:rgba(0,230,118,0.1);color:var(--green)">457 kcal</div><div class="tag" style="background:rgba(0,230,118,0.1);color:var(--green)">35g pro</div><div class="tag" style="background:rgba(0,212,255,0.1);color:var(--cyan)">400ml su</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">09:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-h">📱 Creator Bloğu 1</div><div class="tl-d">Reels script yaz · Bu haftanın içerik planı · Antrenman kliplerini seç · Telefon yok, laptop iş modunda</div><div class="tl-tags"><div class="tag" style="background:rgba(139,92,246,0.1);color:var(--purple)">90 dk</div><div class="tag" style="background:rgba(239,68,68,0.1);color:var(--red)">Instagram kapalı</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">10:30</div><div class="tl-box"><div class="tl-dot" style="background:var(--muted)"></div><div class="tl-h">Mola — 20dk</div><div class="tl-d">Su (300ml) · Hareket · Ekran yok</div><div class="tl-tags"><div class="tag" style="background:rgba(88,88,122,0.1);color:var(--muted)">300ml su</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">10:50</div><div class="tl-box"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-h">📚 Öğrenme Bloğu</div><div class="tl-d">Kitap · Podcast · Kurs · 90 dk tam odak</div><div class="tl-tags"><div class="tag" style="background:rgba(59,130,246,0.1);color:var(--blue)">90 dk</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">12:20</div><div class="tl-box"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-h">☕ Dışarı Kahve — Haftanın 1/3</div><div class="tl-d">Maksimum 30dk · Son kahve budur · 14:00 sonrası kafein yok</div><div class="tl-tags"><div class="tag" style="background:rgba(245,158,11,0.1);color:var(--yellow)">200₺</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">13:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-h">🍗 Öğle — Tavuk + Pilav</div><div class="tl-d">Tavuk göğüs 200g · Pilav 150g pişmiş · Salata · Zeytinyağı 1 yemek kaşığı</div><div class="tl-tags"><div class="tag" style="background:rgba(255,92,26,0.1);color:var(--orange)">800 kcal</div><div class="tag" style="background:rgba(0,230,118,0.1);color:var(--green)">55g pro</div><div class="tag" style="background:rgba(0,212,255,0.1);color:var(--cyan)">300ml su</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">13:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-h">📱 Instagram — 20dk izin</div><div class="tl-d">Günlük 45dk hakkının yarısı. Scroll. Sonra kapat. Timer kur.</div></div></div>
+    <div class="tl-row"><div class="tl-time">13:30</div><div class="tl-box"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-h">📱 Creator Bloğu 2 — Edit & Yayın</div><div class="tl-d">Sabah scripti video yap · Reels edit · Yayınla · Instagram kapalı kalsın</div><div class="tl-tags"><div class="tag" style="background:rgba(139,92,246,0.1);color:var(--purple)">90 dk</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">15:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--muted)"></div><div class="tl-h">Serbest</div><div class="tl-d">Dinlen · sosyal · yürüyüş</div></div></div>
+    <div class="tl-row"><div class="tl-time">17:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-h">📱 Instagram — 25dk izin</div><div class="tl-d">Günlük limitin kalanı. Timer kur. Bitti kapat.</div></div></div>
+    <div class="tl-row"><div class="tl-time">19:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-h">🍗 Akşam — Tavuk + Patates</div><div class="tl-d">Tavuk 180g · Fırın patates 200g · Sebze 150g · Zeytinyağı</div><div class="tl-tags"><div class="tag" style="background:rgba(255,92,26,0.1);color:var(--orange)">850 kcal</div><div class="tag" style="background:rgba(0,230,118,0.1);color:var(--green)">55g pro</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">20:30</div><div class="tl-box"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-h">🍫 Protein Kek</div><div class="tl-d">2 muz + 1 yumurta + whey 1 ölçek + kakao + az bitter çikolata + bal + kabartma tozu</div><div class="tl-tags"><div class="tag" style="background:rgba(244,114,182,0.1);color:var(--pink)">420 kcal</div><div class="tag" style="background:rgba(0,230,118,0.1);color:var(--green)">28g pro</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">21:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-h">🔴 Ekran Kapanır</div><div class="tl-d">Tüm sosyal medya · TV · Bilgisayar · Telefon başka odaya</div></div></div>
+    <div class="tl-row"><div class="tl-time">21:15</div><div class="tl-box"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-h">Magnezyum 300mg + Son Su</div><div class="tl-d">200ml su · Sonra su kesildi</div></div></div>
+    <div class="tl-row"><div class="tl-time">22:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-h">🌙 Uyku</div><div class="tl-d">Karanlık · 18-20°C · Telefon dışarıda</div></div></div>
+  </div>
+
+  <div class="sec">Pazartesi Makro</div>
+  <div class="grid4">
+    <div class="stat"><div class="stat-label">Kalori</div><div class="stat-val" style="color:var(--yellow)">2799</div><div class="stat-sub">kcal</div></div>
+    <div class="stat"><div class="stat-label">Protein</div><div class="stat-val" style="color:var(--green)">180g</div><div class="stat-sub">hedef ✓</div></div>
+    <div class="stat"><div class="stat-label">Karb</div><div class="stat-val" style="color:var(--cyan)">318g</div></div>
+    <div class="stat"><div class="stat-label">Instagram</div><div class="stat-val" style="color:var(--red)">45dk</div><div class="stat-sub">13:00 + 17:00</div></div>
+  </div>
+</div>
+
+<!-- ═══ SALI ═══ -->
+<div class="page" id="page-tue">
+  <div class="ph"><div class="ph-eye">Salı</div><div class="ph-title">Easy <em>Run</em></div><div class="ph-sub">30dk · Zone 2 · &lt;150 BPM · Öğrenme Ağır Gün</div></div>
+  <div class="alert alert-info"><strong>Easy Run Kuralı:</strong> BPM 150 geçince yürüyüşe geç. Bu zayıflık değil, protokol. Zone 2 adaptasyonu bu disiplinle geliyor.</div>
+  <div class="sec">Saat Saat Plan</div>
+  <div class="tl">
+    <div class="tl-row"><div class="tl-time">06:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-h">Kalkış + 500ml Su</div><div class="tl-d">Koşu günü mide hafif — pankek yok. 1 muz + 500ml su.</div><div class="tl-tags"><div class="tag" style="background:rgba(0,212,255,0.1);color:var(--cyan)">500ml su</div><div class="tag" style="background:rgba(245,158,11,0.1);color:var(--yellow)">1 muz</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">06:15</div><div class="tl-box"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-h">Kreatin + Kahve</div><div class="tl-d">Kreatin 5g su ile · Kahve 06:30'da. Koşu öncesi hafif.</div></div></div>
+    <div class="tl-row"><div class="tl-time">06:45</div><div class="tl-box"><div class="tl-dot" style="background:var(--cyan)"></div><div class="tl-h">🏃 Easy Run 30dk</div><div class="tl-d">5dk ısınma yürüyüşü · 20dk Zone 2 koşu (BPM 139-150) · 5dk soğuma · Apple Watch BPM izle · Kadans 150+ hedefle</div><div class="tl-tags"><div class="tag" style="background:rgba(0,212,255,0.1);color:var(--cyan)">30 dk</div><div class="tag" style="background:rgba(0,212,255,0.1);color:var(--cyan)">Zone 2</div><div class="tag" style="background:rgba(0,212,255,0.1);color:var(--cyan)">500ml su</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">07:25</div><div class="tl-box"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-h">Esneme + Duş</div><div class="tl-d">Baldır, hamstring, kalça · 30sn soğuk bitiş</div></div></div>
+    <div class="tl-row"><div class="tl-time">08:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-h">🥣 Post-Workout + Supplement</div><div class="tl-d">Yoğurt karışımı standart tarif · Omega-3 + D3K2 · Verileri hub'a gir</div><div class="tl-tags"><div class="tag" style="background:rgba(0,230,118,0.1);color:var(--green)">457 kcal</div><div class="tag" style="background:rgba(0,212,255,0.1);color:var(--cyan)">400ml su</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">09:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-h">📚 Öğrenme Bloğu 1</div><div class="tl-d">Koşu sonrası zihin en keskin dönem · 90dk tam odak · Telefon kapalı</div><div class="tl-tags"><div class="tag" style="background:rgba(59,130,246,0.1);color:var(--blue)">90 dk</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">10:30</div><div class="tl-box"><div class="tl-dot" style="background:var(--muted)"></div><div class="tl-h">Mola 20dk + Su</div><div class="tl-d">300ml su · Hareket · Ekran yok</div></div></div>
+    <div class="tl-row"><div class="tl-time">10:50</div><div class="tl-box"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-h">📱 Creator — Pazartesi İçeriğini Yayınla</div><div class="tl-d">Dün Push Day videosunu edit et ve yayınla · Easy Run kliplerini kaydet</div><div class="tl-tags"><div class="tag" style="background:rgba(139,92,246,0.1);color:var(--purple)">90 dk</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">12:20</div><div class="tl-box"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-h">🍗 Öğle — Hindi + Makarna</div><div class="tl-d">Hindi 200g · Makarna 150g pişmiş · Salata · Zeytinyağı</div><div class="tl-tags"><div class="tag" style="background:rgba(255,92,26,0.1);color:var(--orange)">800 kcal</div><div class="tag" style="background:rgba(0,212,255,0.1);color:var(--cyan)">300ml su</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">13:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-h">📱 Instagram 20dk</div><div class="tl-d">Timer kur. Bitti kapat.</div></div></div>
+    <div class="tl-row"><div class="tl-time">13:20</div><div class="tl-box"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-h">📚 Öğrenme Bloğu 2</div><div class="tl-d">90 dk · İkinci blok</div></div></div>
+    <div class="tl-row"><div class="tl-time">15:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--muted)"></div><div class="tl-h">Ev Kahvesi + Serbest</div><div class="tl-d">Bugün dışarı kahve yok · Ev kahvesi ~15₺</div></div></div>
+    <div class="tl-row"><div class="tl-time">17:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-h">📱 Instagram 25dk</div><div class="tl-d">Günlük kalan limit.</div></div></div>
+    <div class="tl-row"><div class="tl-time">19:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-h">🍗 Akşam — Hindi + Tortilla</div><div class="tl-d">Hindi 180g · Tortilla 2 adet · Sebze · Sos</div><div class="tl-tags"><div class="tag" style="background:rgba(255,92,26,0.1);color:var(--orange)">850 kcal</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">20:30</div><div class="tl-box"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-h">🍫 Protein Kek</div><div class="tl-d">Standart tarif · 420 kcal</div></div></div>
+    <div class="tl-row"><div class="tl-time">21:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-h">🔴 Ekran Kapanır</div></div></div>
+    <div class="tl-row"><div class="tl-time">22:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-h">🌙 Uyku</div></div></div>
+  </div>
+</div>
+
+<!-- ═══ ÇARŞAMBA ═══ -->
+<div class="page" id="page-wed">
+  <div class="ph"><div class="ph-eye">Çarşamba</div><div class="ph-title">Pull <em>Day</em></div><div class="ph-sub">Sırt · Biceps · Rear Delt · YouTube Yayın Günü · Dışarı Kahve</div></div>
+  <div class="sec">Saat Saat Plan</div>
+  <div class="tl">
+    <div class="tl-row"><div class="tl-time">06:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-h">Kalkış + Pre-Workout</div><div class="tl-d">500ml su · Protein pankek · Kreatin 5g · Kahve 06:30</div><div class="tl-tags"><div class="tag" style="background:rgba(245,158,11,0.1);color:var(--yellow)">272 kcal</div><div class="tag" style="background:rgba(0,212,255,0.1);color:var(--cyan)">500ml su</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">06:45</div><div class="tl-box"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-h">🏋️ Pull Day</div><div class="tl-d">Pull Ups 4×6-8 → Cable Row 3×10-12 → CG Pulldown 3×10-12 → Face Pulls 3×12-15 → Barbell Curls 3×8-10</div><div class="tl-tags"><div class="tag" style="background:rgba(255,92,26,0.1);color:var(--orange)">~80 dk</div><div class="tag" style="background:rgba(255,92,26,0.1);color:var(--orange)">RPE 7-8</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">08:15</div><div class="tl-box"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-h">Esneme + Duş + Post-Workout</div><div class="tl-d">Yoğurt karışımı · Omega-3 + D3K2 · 400ml su</div></div></div>
+    <div class="tl-row"><div class="tl-time">09:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-h">📱 YouTube Vlog Edit</div><div class="tl-d">Pzt Push + Sal Easy Run görüntülerini birleştir · 8-12dk video · Bugün yayınla</div><div class="tl-tags"><div class="tag" style="background:rgba(139,92,246,0.1);color:var(--purple)">2 saat</div><div class="tag" style="background:rgba(139,92,246,0.1);color:var(--purple)">YouTube Yayın</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">11:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-h">☕ Dışarı Kahve — Haftanın 2/3</div><div class="tl-d">YouTube yayınlandı · 200₺ · Son kafein bu</div></div></div>
+    <div class="tl-row"><div class="tl-time">12:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-h">📚 Öğrenme Bloğu</div><div class="tl-d">90dk</div></div></div>
+    <div class="tl-row"><div class="tl-time">13:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-h">🍗 Öğle + Instagram 20dk</div><div class="tl-d">Tavuk 200g + Pilav 150g + Salata · Yedikten sonra 20dk Instagram</div><div class="tl-tags"><div class="tag" style="background:rgba(255,92,26,0.1);color:var(--orange)">800 kcal</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">14:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--muted)"></div><div class="tl-h">Serbest</div></div></div>
+    <div class="tl-row"><div class="tl-time">17:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-h">📱 Instagram 25dk</div></div></div>
+    <div class="tl-row"><div class="tl-time">19:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-h">🍗 Akşam — Tavuk + Patates</div><div class="tl-d">Tavuk 180g · Patates 200g · Sebze 150g</div><div class="tl-tags"><div class="tag" style="background:rgba(255,92,26,0.1);color:var(--orange)">850 kcal</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">20:30</div><div class="tl-box"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-h">🍫 Protein Kek</div></div></div>
+    <div class="tl-row"><div class="tl-time">21:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-h">🔴 Ekran Kapanır</div></div></div>
+    <div class="tl-row"><div class="tl-time">22:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-h">🌙 Uyku</div></div></div>
+  </div>
+</div>
+
+<!-- ═══ PERŞEMBE ═══ -->
+<div class="page" id="page-thu">
+  <div class="ph"><div class="ph-eye">Perşembe</div><div class="ph-title">Interval <em>Run</em></div><div class="ph-sub">3×(3dk koşu + 2dk yürüyüş) · Haftalık Analiz Günü</div></div>
+  <div class="alert alert-warn"><strong>HRV Kontrolü:</strong> HRV &lt;55 → 3 set yerine 2 set. HRV 55-70 → standart. HRV 70+ → tam gaz.</div>
+  <div class="sec">Saat Saat Plan</div>
+  <div class="tl">
+    <div class="tl-row"><div class="tl-time">06:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-h">Kalkış — Hafif Pre-Workout</div><div class="tl-d">500ml su · 1 muz · Kreatin 5g · Pankek yok — interval günü mide hafif</div></div></div>
+    <div class="tl-row"><div class="tl-time">06:45</div><div class="tl-box"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-h">🏃 Interval Run</div><div class="tl-d">5dk ısınma → Set1: 3dk koşu (Zone 3: 152-164 BPM) → 2dk yürüyüş → Set2 → 2dk → Set3 → 5dk soğuma · Her set için pace ve maks BPM kaydet</div><div class="tl-tags"><div class="tag" style="background:rgba(244,114,182,0.1);color:var(--pink)">~25 dk</div><div class="tag" style="background:rgba(244,114,182,0.1);color:var(--pink)">Zone 3</div><div class="tag" style="background:rgba(244,114,182,0.1);color:var(--pink)">152-164 BPM</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">07:20</div><div class="tl-box"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-h">Esneme + Duş + Post-Workout</div><div class="tl-d">Yoğurt karışımı · Verileri hub'a gir ve Claude'a gönder</div></div></div>
+    <div class="tl-row"><div class="tl-time">09:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-h">📚 Öğrenme Bloğu</div><div class="tl-d">90dk · Interval sonrası zihin aktif</div></div></div>
+    <div class="tl-row"><div class="tl-time">10:30</div><div class="tl-box"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-h">📱 Creator — Interval İçeriği</div><div class="tl-d">Set başı vs son set pace karşılaştırması · Reels hazırla</div><div class="tl-tags"><div class="tag" style="background:rgba(139,92,246,0.1);color:var(--purple)">90 dk</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">12:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-h">🍗 Öğle + Instagram 20dk</div><div class="tl-d">Tavuk 200g + Pilav 150g + Salata</div><div class="tl-tags"><div class="tag" style="background:rgba(255,92,26,0.1);color:var(--orange)">800 kcal</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">13:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-h">📊 Haftalık Analiz — 45dk</div><div class="tl-d">HRV trendi · Koşu gelişimi · Gym ilerleme · Uyku kalitesi · Finans · Ekran süresi raporu · Claude'a gönder</div><div class="tl-tags"><div class="tag" style="background:rgba(245,158,11,0.1);color:var(--yellow)">45 dk</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">14:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--muted)"></div><div class="tl-h">Ev Kahvesi + Serbest</div><div class="tl-d">Bugün dışarı kahve yok · ~15₺</div></div></div>
+    <div class="tl-row"><div class="tl-time">17:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-h">📱 Instagram 25dk</div></div></div>
+    <div class="tl-row"><div class="tl-time">19:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-h">🍗 Akşam — Hindi + Makarna</div><div class="tl-d">Hindi 180g · Makarna 150g · Sebze</div><div class="tl-tags"><div class="tag" style="background:rgba(255,92,26,0.1);color:var(--orange)">850 kcal</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">20:30</div><div class="tl-box"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-h">🍫 Protein Kek</div></div></div>
+    <div class="tl-row"><div class="tl-time">21:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-h">🔴 Ekran Kapanır</div></div></div>
+    <div class="tl-row"><div class="tl-time">22:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-h">🌙 Uyku</div></div></div>
+  </div>
+</div>
+
+<!-- ═══ CUMA ═══ -->
+<div class="page" id="page-fri">
+  <div class="ph"><div class="ph-eye">Cuma</div><div class="ph-title">Leg <em>Day</em></div><div class="ph-sub">Quad · Hamstring · Calf · Veri Carousel · Dışarı Kahve</div></div>
+  <div class="sec">Saat Saat Plan</div>
+  <div class="tl">
+    <div class="tl-row"><div class="tl-time">06:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-h">Kalkış + Pre-Workout</div><div class="tl-d">500ml su · Protein pankek · Kreatin 5g · Leg Day en ağır antrenman — yakıt şart</div></div></div>
+    <div class="tl-row"><div class="tl-time">06:45</div><div class="tl-box"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-h">🏋️ Leg Day</div><div class="tl-d">Back Squat 4×6-8 (2.5dk rest) → DB RDLs 3×8-10 → Single Leg Press 2×8-10 → Ham Curls 3×8-10 → Lunges 2×10-12 → Calf Raises 3×10-12 · Sonunda 10dk foam roller</div><div class="tl-tags"><div class="tag" style="background:rgba(0,230,118,0.1);color:var(--green)">~90 dk</div><div class="tag" style="background:rgba(0,230,118,0.1);color:var(--green)">RPE 7-8</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">08:30</div><div class="tl-box"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-h">Post-Workout + Duş</div><div class="tl-d">Yoğurt karışımı · Omega-3 + D3K2</div></div></div>
+    <div class="tl-row"><div class="tl-time">09:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--cyan)"></div><div class="tl-h">📊 Creator — Haftalık Veri Carousel</div><div class="tl-d">Bu haftanın verileri: HRV trendi · zone dağılımı · pace gelişimi · Carousel formatı en çok paylaşılan</div><div class="tl-tags"><div class="tag" style="background:rgba(0,212,255,0.1);color:var(--cyan)">90 dk</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">10:30</div><div class="tl-box"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-h">☕ Dışarı Kahve — Haftanın 3/3</div><div class="tl-d">Son dışarı kahve · Leg Day tamamlandı · 200₺</div></div></div>
+    <div class="tl-row"><div class="tl-time">11:30</div><div class="tl-box"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-h">📚 Öğrenme Bloğu</div><div class="tl-d">90dk</div></div></div>
+    <div class="tl-row"><div class="tl-time">13:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-h">🍗 Öğle + Instagram 20dk</div><div class="tl-d">Tavuk 200g + Pilav + Salata · 800 kcal</div></div></div>
+    <div class="tl-row"><div class="tl-time">14:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--muted)"></div><div class="tl-h">Tamamen Serbest</div><div class="tl-d">Haftanın en serbest öğleden sonrası</div></div></div>
+    <div class="tl-row"><div class="tl-time">17:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-h">📱 Instagram 25dk</div></div></div>
+    <div class="tl-row"><div class="tl-time">19:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-h">🍗 Akşam — Tavuk + Tortilla</div><div class="tl-d">850 kcal</div></div></div>
+    <div class="tl-row"><div class="tl-time">20:30</div><div class="tl-box"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-h">🍫 Protein Kek</div></div></div>
+    <div class="tl-row"><div class="tl-time">21:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-h">🔴 Ekran Kapanır</div></div></div>
+    <div class="tl-row"><div class="tl-time">22:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-h">🌙 Uyku</div></div></div>
+  </div>
+</div>
+
+<!-- ═══ CUMARTESİ ═══ -->
+<div class="page" id="page-sat">
+  <div class="ph"><div class="ph-eye">Cumartesi</div><div class="ph-title">Long <em>Run</em></div><div class="ph-sub">60dk · Zone 2 · Cinematic Çekim · YouTube Yayın</div></div>
+  <div class="alert alert-info"><strong>Long Run = En iyi creator içerik günü.</strong> Maltepe tepeleri + sabah ışığı + Apple Watch ekranı = cinematic Reels. Telefonu bağla, görüntü al.</div>
+  <div class="sec">Saat Saat Plan</div>
+  <div class="tl">
+    <div class="tl-row"><div class="tl-time">06:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-h">Kalkış — Hafif Pre-Workout</div><div class="tl-d">500ml su · 1 muz · Kreatin · 60dk koşu — mide çok hafif olmalı</div></div></div>
+    <div class="tl-row"><div class="tl-time">06:45</div><div class="tl-box"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-h">🏃 Long Run 60dk</div><div class="tl-d">5dk ısınma → 50dk Zone 2 (BPM &lt;150 — geçince yürüyüşe geç) → 5dk soğuma · Maltepe tepelerinde cinematic çekim fırsatı</div><div class="tl-tags"><div class="tag" style="background:rgba(59,130,246,0.1);color:var(--blue)">60 dk</div><div class="tag" style="background:rgba(59,130,246,0.1);color:var(--blue)">Zone 2</div><div class="tag" style="background:rgba(59,130,246,0.1);color:var(--blue)">&lt;150 BPM</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">08:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-h">Esneme + Duş + Büyük Post-Workout</div><div class="tl-d">Long Run sonrası artırılmış porsiyon: Yulaf 50g + Whey 30g + Yoğurt 200g + Muz 100g + Yaban mersini + Bal 15g · ~550 kcal</div></div></div>
+    <div class="tl-row"><div class="tl-time">09:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-h">📱 YouTube Haftalık Vlog Edit + Yayın</div><div class="tl-d">Tüm hafta görüntüleri · Long Run klipler vurgu · 8-12dk · Bugün yayınla</div><div class="tl-tags"><div class="tag" style="background:rgba(139,92,246,0.1);color:var(--purple)">2-3 saat</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">12:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--muted)"></div><div class="tl-h">Serbest + Ev Kahvesi</div></div></div>
+    <div class="tl-row"><div class="tl-time">13:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-h">🍗 Öğle + Instagram 20dk</div><div class="tl-d">Tavuk 200g + Pilav 200g (Long Run sonrası fazla karb) + Salata · ~850 kcal</div></div></div>
+    <div class="tl-row"><div class="tl-time">14:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-h">📚 Öğrenme Bloğu</div><div class="tl-d">90dk</div></div></div>
+    <div class="tl-row"><div class="tl-time">15:30</div><div class="tl-box"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-h">Gelecek Hafta İçerik Planı</div><div class="tl-d">45dk · Hook fikirleri · Çekim listesi · Yayın takvimi</div></div></div>
+    <div class="tl-row"><div class="tl-time">16:30</div><div class="tl-box"><div class="tl-dot" style="background:var(--muted)"></div><div class="tl-h">Tamamen Serbest</div></div></div>
+    <div class="tl-row"><div class="tl-time">17:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-h">📱 Instagram 25dk</div></div></div>
+    <div class="tl-row"><div class="tl-time">19:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-h">🍗 Akşam — Tavuk + Patates</div><div class="tl-d">900 kcal — Long Run sonrası karb yüksek</div></div></div>
+    <div class="tl-row"><div class="tl-time">20:30</div><div class="tl-box"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-h">🍫 Protein Kek</div></div></div>
+    <div class="tl-row"><div class="tl-time">21:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-h">🔴 Ekran Kapanır</div></div></div>
+    <div class="tl-row"><div class="tl-time">22:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-h">🌙 Uyku — Haftanın En Kritik Gecesi</div></div></div>
+  </div>
+</div>
+
+<!-- ═══ PAZAR ═══ -->
+<div class="page" id="page-sun">
+  <div class="ph"><div class="ph-eye">Pazar</div><div class="ph-title">Rest <em>Day</em></div><div class="ph-sub">Dinlenme · Haftalık Review · Planlama · Sosyal</div></div>
+  <div class="tl">
+    <div class="tl-row"><div class="tl-time">07:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--muted)"></div><div class="tl-h">Geç Kalkış — Tek İstisna</div><div class="tl-d">07:00-07:30 · Alarm yok · Doğal uyanma</div></div></div>
+    <div class="tl-row"><div class="tl-time">07:30</div><div class="tl-box"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-h">Yavaş Sabah — Ev Kahvesi</div><div class="tl-d">500ml su · Pankek · Kahve · Acele yok</div></div></div>
+    <div class="tl-row"><div class="tl-time">08:30</div><div class="tl-box"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-h">Yoğurt Karışımı + Supplement</div></div></div>
+    <div class="tl-row"><div class="tl-time">09:30</div><div class="tl-box"><div class="tl-dot" style="background:var(--muted)"></div><div class="tl-h">Hafif Yürüyüş 20-30dk</div><div class="tl-d">Aktif dinlenme · Kas kan akışı · Telefon cebinde değil</div></div></div>
+    <div class="tl-row"><div class="tl-time">10:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-h">📊 Haftalık Review — 45dk</div><div class="tl-d">HRV · koşu · gym · uyku · creator · finans · ekran süresi · Pazar olduğu için Instagram 60dk izin bugün</div><div class="tl-tags"><div class="tag" style="background:rgba(245,158,11,0.1);color:var(--yellow)">Claude'a gönder</div></div></div></div>
+    <div class="tl-row"><div class="tl-time">11:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-h">📅 Gelecek Hafta Planı — 30dk</div><div class="tl-d">Antrenman hedefleri · İçerik takvimi · Öğrenme konusu · Sosyal planlar</div></div></div>
+    <div class="tl-row"><div class="tl-time">11:30</div><div class="tl-box"><div class="tl-dot" style="background:var(--muted)"></div><div class="tl-h">Tamamen Serbest — Tüm Öğleden Sonra</div><div class="tl-d">Sosyal plan · Arkadaş · Sevgili · Dinlenme · Hiçbir zorunluluk yok</div></div></div>
+    <div class="tl-row"><div class="tl-time">19:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-h">🍗 Akşam — Normal Porsiyon</div><div class="tl-d">Tavuk 180g + Patates 200g + Sebze · 800 kcal (antrenman yok, hafif)</div></div></div>
+    <div class="tl-row"><div class="tl-time">20:30</div><div class="tl-box"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-h">🍫 Protein Kek</div></div></div>
+    <div class="tl-row"><div class="tl-time">21:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-h">🔴 Ekran Kapanır — PAZARTESİ KRİTİK</div><div class="tl-d">Pazartesi 06:00'da kalkacaksın. Pazar gecesi uyku kalitesi haftayı kuruyor.</div></div></div>
+    <div class="tl-row"><div class="tl-time">22:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-h">🌙 Uyku</div></div></div>
+  </div>
+</div>
+
+<!-- ═══ BESLENME ═══ -->
+<div class="page" id="page-nutrition">
+  <div class="ph"><div class="ph-eye">Beslenme Sistemi</div><div class="ph-title">Günlük <em>Makrolar</em></div><div class="ph-sub">2800 kcal · 180g protein · 320g karb · 89g yağ</div></div>
+
+  <div class="grid4" style="margin-bottom:16px">
+    <div class="stat"><div class="stat-label">Kalori</div><div class="stat-val" style="color:var(--yellow)">2800</div><div class="stat-sub">kcal/gün</div></div>
+    <div class="stat"><div class="stat-label">Protein</div><div class="stat-val" style="color:var(--green)">180g</div><div class="stat-sub">2.5g/kg</div></div>
+    <div class="stat"><div class="stat-label">Karb</div><div class="stat-val" style="color:var(--cyan)">320g</div><div class="stat-sub">enerji</div></div>
+    <div class="stat"><div class="stat-label">Yağ</div><div class="stat-val" style="color:var(--orange)">89g</div><div class="stat-sub">hormon sağlığı</div></div>
+  </div>
+
+  <div class="sec">Öğünler</div>
+  <div class="meal open">
+    <div class="meal-h" onclick="toggleMeal(this)"><div class="meal-time" style="background:rgba(239,68,68,0.15);color:var(--red)">06:15</div><div class="meal-name">🥞 Pre-Workout Pankek</div><div class="meal-kcal">272 kcal</div><div class="meal-chev">▾</div></div>
+    <div class="meal-body">
+      <div style="margin-top:10px">
+        <div class="meal-item"><span>Pankek tozu</span><span>50g</span></div>
+        <div class="meal-item"><span>Süt</span><span>70ml</span></div>
+        <div class="meal-item"><span>Muz</span><span>40g (yarım)</span></div>
+        <div class="meal-item"><span>Çilek</span><span>30g</span></div>
+        <div class="meal-item"><span>Bal</span><span>5g</span></div>
+        <div class="meal-total"><span>Toplam</span><span style="color:var(--cyan)">272 kcal · 16g pro · 48g karb</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="meal">
+    <div class="meal-h" onclick="toggleMeal(this)"><div class="meal-time" style="background:rgba(0,230,118,0.15);color:var(--green)">08:30</div><div class="meal-name">🥣 Post-Workout Karışım</div><div class="meal-kcal">457 kcal</div><div class="meal-chev">▾</div></div>
+    <div class="meal-body">
+      <div style="margin-top:10px">
+        <div class="meal-item"><span>Yulaf</span><span>40g</span></div>
+        <div class="meal-item"><span>Whey protein</span><span>25g</span></div>
+        <div class="meal-item"><span>Yoğurt</span><span>150g</span></div>
+        <div class="meal-item"><span>Muz</span><span>80g</span></div>
+        <div class="meal-item"><span>Yaban mersini</span><span>30g</span></div>
+        <div class="meal-item"><span>Bal</span><span>10g</span></div>
+        <div class="meal-item"><span>Tarçın</span><span>1 tatlı kaşığı</span></div>
+        <div class="meal-total"><span>Toplam</span><span style="color:var(--cyan)">457 kcal · 35g pro · 65g karb</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="meal">
+    <div class="meal-h" onclick="toggleMeal(this)"><div class="meal-time" style="background:rgba(245,158,11,0.15);color:var(--yellow)">13:00</div><div class="meal-name">🍗 Öğle Yemeği</div><div class="meal-kcal">800 kcal</div><div class="meal-chev">▾</div></div>
+    <div class="meal-body">
+      <div style="margin-top:10px">
+        <div style="display:flex;gap:6px;margin-bottom:10px">
+          <button class="tag" style="background:rgba(245,158,11,0.15);color:var(--yellow);cursor:pointer;border:none" onclick="toggleOpt('l1','l2',this)">Tavuk + Pilav</button>
+          <button class="tag" style="background:rgba(88,88,122,0.1);color:var(--muted);cursor:pointer;border:none" onclick="toggleOpt('l2','l1',this)">Hindi + Makarna</button>
+        </div>
+        <div id="l1">
+          <div class="meal-item"><span>Tavuk göğüs</span><span>200g</span></div>
+          <div class="meal-item"><span>Pilav (pişmiş)</span><span>150g</span></div>
+          <div class="meal-item"><span>Salata + zeytinyağı</span><span>serbest</span></div>
+          <div class="meal-total"><span>Toplam</span><span style="color:var(--cyan)">800 kcal · 55g pro · 85g karb</span></div>
+        </div>
+        <div id="l2" style="display:none">
+          <div class="meal-item"><span>Hindi göğüs</span><span>200g</span></div>
+          <div class="meal-item"><span>Makarna (pişmiş)</span><span>150g</span></div>
+          <div class="meal-item"><span>Salata + zeytinyağı</span><span>serbest</span></div>
+          <div class="meal-total"><span>Toplam</span><span style="color:var(--cyan)">800 kcal · 55g pro · 85g karb</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="meal">
+    <div class="meal-h" onclick="toggleMeal(this)"><div class="meal-time" style="background:rgba(139,92,246,0.15);color:var(--purple)">19:00</div><div class="meal-name">🍗 Akşam Yemeği</div><div class="meal-kcal">850 kcal</div><div class="meal-chev">▾</div></div>
+    <div class="meal-body">
+      <div style="margin-top:10px">
+        <div style="display:flex;gap:6px;margin-bottom:10px">
+          <button class="tag" style="background:rgba(139,92,246,0.15);color:var(--purple);cursor:pointer;border:none" onclick="toggleOpt('d1','d2',this)">Tavuk + Patates</button>
+          <button class="tag" style="background:rgba(88,88,122,0.1);color:var(--muted);cursor:pointer;border:none" onclick="toggleOpt('d2','d1',this)">Hindi + Tortilla</button>
+        </div>
+        <div id="d1">
+          <div class="meal-item"><span>Tavuk göğüs</span><span>180g</span></div>
+          <div class="meal-item"><span>Fırın patates</span><span>200g</span></div>
+          <div class="meal-item"><span>Sebze</span><span>150g</span></div>
+          <div class="meal-total"><span>Toplam</span><span style="color:var(--cyan)">850 kcal · 55g pro · 80g karb</span></div>
+        </div>
+        <div id="d2" style="display:none">
+          <div class="meal-item"><span>Hindi göğüs</span><span>180g</span></div>
+          <div class="meal-item"><span>Tortilla</span><span>2 adet</span></div>
+          <div class="meal-item"><span>Sebze + sos</span><span>serbest</span></div>
+          <div class="meal-total"><span>Toplam</span><span style="color:var(--cyan)">850 kcal · 55g pro · 80g karb</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="meal">
+    <div class="meal-h" onclick="toggleMeal(this)"><div class="meal-time" style="background:rgba(244,114,182,0.15);color:var(--pink)">20:30</div><div class="meal-name">🍫 Gece Protein Kek</div><div class="meal-kcal">420 kcal</div><div class="meal-chev">▾</div></div>
+    <div class="meal-body">
+      <div style="margin-top:10px">
+        <div class="meal-item"><span>Muz</span><span>2 adet (ezilmiş)</span></div>
+        <div class="meal-item"><span>Yumurta</span><span>1 adet</span></div>
+        <div class="meal-item"><span>Protein tozu</span><span>1 ölçek</span></div>
+        <div class="meal-item"><span>Kakao</span><span>1 tatlı kaşığı</span></div>
+        <div class="meal-item"><span>Bitter çikolata</span><span>az — kafein dikkat</span></div>
+        <div class="meal-item"><span>Bal</span><span>1 tatlı kaşığı</span></div>
+        <div class="meal-item"><span>Kabartma tozu</span><span>yarım paket</span></div>
+        <div class="meal-total"><span>Toplam</span><span style="color:var(--cyan)">420 kcal · 28g pro · 55g karb</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SUPPLEMENT ═══ -->
+<div class="page" id="page-supplements">
+  <div class="ph"><div class="ph-eye">Protokol</div><div class="ph-title">Supplement <em>Sistemi</em></div><div class="ph-sub">Aylık ~1.800₺ · 6 ürün · Gereksiz sıfır</div></div>
+
+  <div class="sec">06:15 — Pre-Workout (Her Gün)</div>
+  <div class="grid-auto">
+    <div class="supp"><div class="supp-time">06:15 · Her gün</div><div class="supp-name">Kreatin Monohidrat</div><div class="supp-dose">5g · Su ile · Yükleme yok</div><div class="supp-why">Kas gücü +5-10% · Beyin performansı · Toparlanma · En kanıtlanmış supplement · Ucuz · Etkili</div></div>
+  </div>
+
+  <div class="sec">08:45 — Post-Workout (Her Gün)</div>
+  <div class="grid-auto">
+    <div class="supp"><div class="supp-time">08:45 · Yemekle</div><div class="supp-name">Omega-3 Balık Yağı</div><div class="supp-dose">2 kapsül · EPA+DHA 2g</div><div class="supp-why">Enflamasyon azaltma · Eklem sağlığı · Kardiyovasküler · Beyin fonksiyonu · Yağda çözünür — yemekle al</div></div>
+    <div class="supp"><div class="supp-time">08:45 · Yemekle</div><div class="supp-name">D3 + K2</div><div class="supp-dose">D3 2000-4000 IU · K2 100mcg</div><div class="supp-why">Türkiye'de D3 eksikliği yaygın · Bağışıklık · Kemik · Hormonal sağlık · K2 kalsiyumu doğru yönlendirir</div></div>
+    <div class="supp"><div class="supp-time">08:45 · Her gün</div><div class="supp-name">Whey Protein</div><div class="supp-dose">25g · Yoğurt karışımına</div><div class="supp-why">180g protein hedefini tutturmak için · Post-workout penceresi kritik · Kaliteli kaynak seç</div></div>
+    <div class="supp"><div class="supp-time">08:45 · Yemekle</div><div class="supp-name">Multivitamin</div><div class="supp-dose">1 tablet</div><div class="supp-why">Beslenmen zaten iyi · Yedek sigorta · Eksik kalan mikro besinler için</div></div>
+  </div>
+
+  <div class="sec">21:15 — Uyku Öncesi (Her Gece)</div>
+  <div class="grid-auto">
+    <div class="supp" style="border-color:rgba(59,130,246,0.3)"><div class="supp-time">21:15 · Her gece</div><div class="supp-name" style="color:var(--blue)">Magnezyum Glisinat</div><div class="supp-dose">300-400mg</div><div class="supp-why">Deep Sleep için en kritik supplement · Kas gevşemesi · Sinir sistemi sakinleşmesi · Glisinat formu en iyi emilim · Şu an 50dk olan Deep Sleep'i 70-80dk'ya çıkaracak</div></div>
+  </div>
+
+  <div class="sec">Aylık Maliyet</div>
+  <div class="grid4">
+    <div class="stat"><div class="stat-label">Kreatin</div><div class="stat-val" style="color:var(--green)">300₺</div><div class="stat-sub">500g / 3 ay</div></div>
+    <div class="stat"><div class="stat-label">Whey</div><div class="stat-val" style="color:var(--cyan)">900₺</div><div class="stat-sub">2kg / 1 ay</div></div>
+    <div class="stat"><div class="stat-label">Omega-3</div><div class="stat-val" style="color:var(--orange)">250₺</div></div>
+    <div class="stat"><div class="stat-label">D3+K2</div><div class="stat-val" style="color:var(--yellow)">150₺</div></div>
+    <div class="stat"><div class="stat-label">Magnezyum</div><div class="stat-val" style="color:var(--blue)">200₺</div></div>
+    <div class="stat"><div class="stat-label">Multivitamin</div><div class="stat-val" style="color:var(--muted)">150₺</div></div>
+    <div class="stat" style="border-color:rgba(139,92,246,0.3)"><div class="stat-label">TOPLAM</div><div class="stat-val" style="color:var(--purple)">~1950₺</div><div class="stat-sub">vs 5000₺ önceki</div></div>
+    <div class="stat"><div class="stat-label">Tasarruf</div><div class="stat-val" style="color:var(--green)">3050₺</div><div class="stat-sub">aylık</div></div>
+  </div>
+</div>
+
+<!-- ═══ FİNANS ═══ -->
+<div class="page" id="page-finance">
+  <div class="ph"><div class="ph-eye">Finans Sistemi</div><div class="ph-title">Aylık <em>Bütçe</em></div><div class="ph-sub">Gelir: 20.000₺ · Gider: ~7.500₺ · Kalan: ~12.500₺</div></div>
+
+  <div class="sec">Aylık Gider Tablosu</div>
+  <div class="card" style="margin-bottom:16px">
+    <table class="fin-table">
+      <thead><tr><th>Kategori</th><th>Detay</th><th style="text-align:right">Optimize</th></tr></thead>
+      <tbody>
+        <tr><td>Supplement</td><td>6 ürün sistemi</td><td class="amt" style="color:var(--green)">~1.950₺</td></tr>
+        <tr><td>Kahve (dışarı)</td><td>3 gün/hafta × 200₺</td><td class="amt" style="color:var(--yellow)">~2.400₺</td></tr>
+        <tr><td>Kahve (ev)</td><td>4 gün/hafta × 15₺</td><td class="amt" style="color:var(--green)">~240₺</td></tr>
+        <tr><td>Ulaşım</td><td>Sabit</td><td class="amt">1.000₺</td></tr>
+        <tr><td>Telefon faturası</td><td>Sabit</td><td class="amt">1.000₺</td></tr>
+        <tr><td>Abonelikler</td><td>Claude AI + Spotify + HBO + YouTube</td><td class="amt">~900₺</td></tr>
+        <tr class="total"><td>Toplam Gider</td><td></td><td class="amt" style="color:var(--red)">~7.490₺</td></tr>
+        <tr class="total"><td>Elde Kalan</td><td></td><td class="amt" style="color:var(--green)">~12.510₺</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sec">12.510₺ Dağılımı</div>
+  <div class="grid4">
+    <div class="stat" style="border-color:rgba(0,230,118,0.2)"><div class="stat-label">🔒 Acil Fon</div><div class="stat-val" style="color:var(--green)">3.000₺</div><div class="stat-sub">Dokunulmaz birikim</div></div>
+    <div class="stat" style="border-color:rgba(245,158,11,0.2)"><div class="stat-label">📈 Yatırım</div><div class="stat-val" style="color:var(--yellow)">3.000₺</div><div class="stat-sub">Altın/döviz/fon</div></div>
+    <div class="stat" style="border-color:rgba(139,92,246,0.2)"><div class="stat-label">🎬 Creator Yatırım</div><div class="stat-val" style="color:var(--purple)">2.000₺</div><div class="stat-sub">Ekipman/büyüme</div></div>
+    <div class="stat"><div class="stat-label">💰 Serbest</div><div class="stat-val" style="color:var(--cyan)">4.510₺</div><div class="stat-sub">Esnek harcama</div></div>
+  </div>
+
+  <div class="sec">Creator Ekipman Planı</div>
+  <div class="card">
+    <table class="fin-table">
+      <thead><tr><th>Ekipman</th><th>Öncelik</th><th style="text-align:right">Maliyet</th></tr></thead>
+      <tbody>
+        <tr><td>Gimbal (DJI OM5/6)</td><td>1. ay — en önce</td><td class="amt" style="color:var(--purple)">~2.500₺</td></tr>
+        <tr><td>Lapel Mikrofon</td><td>2. ay</td><td class="amt">~800₺</td></tr>
+        <tr><td>ND Filter (iPhone)</td><td>3. ay</td><td class="amt">~400₺</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert alert-warn">
+    <strong>HBO Max değerlendirmesi:</strong> Aylık kaç saat izliyorsun? Haftada 1-2 bölümden azsa iptal et. Ayda 1 ay aç 1 ay kapa sistemi daha mantıklı. ~150-200₺/ay tasarruf.
+  </div>
+</div>
+
+<!-- ═══ CREATOR ═══ -->
+<div class="page" id="page-creator">
+  <div class="ph"><div class="ph-eye">Creator Sistemi</div><div class="ph-title">Mootie <em>Creator</em></div><div class="ph-sub">Hybrid Athlete · Disiplin · Performance · İstanbul · Türkçe</div></div>
+
+  <div class="alert alert-success"><strong>Arketip: "The Silent Athlete"</strong><br>Bağırarak değil veriyle konuşan. Guru değil sporcu. Cringe değil cinematic. Türkiye'de bu boşluk var.</div>
+
+  <div class="sec">İçerik Pillar'ları</div>
+  <div class="grid2" style="margin-bottom:16px">
+    <div class="card"><div style="font-size:18px;margin-bottom:8px">🏃</div><div style="font-size:13px;font-weight:700;margin-bottom:6px">Running Journey</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);line-height:1.7">Koşu verileri, pace gelişimi, zone analizleri. Maltepe tepeleri cinematic. En viral potansiyelli pillar.</div></div>
+    <div class="card"><div style="font-size:18px;margin-bottom:8px">💪</div><div style="font-size:13px;font-weight:700;margin-bottom:6px">Gym Progression</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);line-height:1.7">Push/Pull/Leg sistemi, ağırlık artışları. Hybrid training neden çalışıyor.</div></div>
+    <div class="card"><div style="font-size:18px;margin-bottom:8px">📊</div><div style="font-size:13px;font-weight:700;margin-bottom:6px">Data & Recovery</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);line-height:1.7">HRV, VO2 Max, Deep Sleep, Apple Watch ekranları. Türkiye'de kimsenin yapmadığı içerik.</div></div>
+    <div class="card"><div style="font-size:18px;margin-bottom:8px">🌅</div><div style="font-size:13px;font-weight:700;margin-bottom:6px">Morning System</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);line-height:1.7">06:00 kalkış, 06:45 antrenman. Sabah disiplin içeriği her platformda viral.</div></div>
+    <div class="card"><div style="font-size:18px;margin-bottom:8px">🧠</div><div style="font-size:13px;font-weight:700;margin-bottom:6px">Mindset & Science</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);line-height:1.7">Zone 2'nin bilimi, HRV nedir, hybrid training teorisi. Güven inşa ediyor.</div></div>
+    <div class="card"><div style="font-size:18px;margin-bottom:8px">🎬</div><div style="font-size:13px;font-weight:700;margin-bottom:6px">Cinematic Moments</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);line-height:1.7">Ses olmadan anlatılan hikayeler. Sabah koşusu, şehir sesi, nefes. Bu paylaşılıyor.</div></div>
+  </div>
+
+  <div class="sec">Viral Potansiyeli Yüksek İlk Videolar</div>
+  <div class="content-card"><div class="content-card-h"><div class="content-num">01</div><div class="content-title">"6 Günde Koşu Hızım Bu Kadar Değişti — Verilerle"</div><div class="tag" style="background:rgba(239,68,68,0.15);color:var(--red)">VİRAL</div></div><div class="content-desc">13 Mayıs 7'50" → 19 Mayıs 6'50". Aynı BPM. Apple Watch grafikleri. Bu nasıl mümkün?</div><div class="content-tags"><div class="tag" style="background:rgba(0,212,255,0.1);color:var(--cyan)">VERİ</div><div class="tag" style="background:rgba(0,212,255,0.1);color:var(--cyan)">REELS</div></div></div>
+  <div class="content-card"><div class="content-card-h"><div class="content-num">02</div><div class="content-title">"Türkiye'de Kimsenin Yapmadığı Koşu Yöntemi: Zone 2"</div><div class="tag" style="background:rgba(59,130,246,0.15);color:var(--blue)">SEO</div></div><div class="content-desc">Zone 2'yi Türkçe açıklayan kapsamlı içerik neredeyse yok. Bu boşluk sana ait.</div><div class="content-tags"><div class="tag" style="background:rgba(59,130,246,0.1);color:var(--blue)">YOUTUBE</div><div class="tag" style="background:rgba(59,130,246,0.1);color:var(--blue)">EĞİTİCİ</div></div></div>
+  <div class="content-card"><div class="content-card-h"><div class="content-num">03</div><div class="content-title">"HRV 91ms ile Başladım — Bu Ne Anlama Geliyor?"</div><div class="tag" style="background:rgba(239,68,68,0.15);color:var(--red)">VİRAL</div></div><div class="content-desc">Apple Health ekranı yakın çekim. HRV nedir, 91 iyi mi? Türkçe bu içerik yok.</div><div class="content-tags"><div class="tag" style="background:rgba(0,230,118,0.1);color:var(--green)">DATA</div></div></div>
+  <div class="content-card"><div class="content-card-h"><div class="content-num">04</div><div class="content-title">"Sigarayı Bıraktım — 2 Haftada Vücudum Ne Değişti?"</div><div class="tag" style="background:rgba(139,92,246,0.15);color:var(--purple)">KİŞİSEL</div></div><div class="content-desc">HRV artışı, RHR düşüşü, koşu performansı. Gerçek veri. Güçlü kişisel hikaye.</div><div class="content-tags"><div class="tag" style="background:rgba(139,92,246,0.1);color:var(--purple)">TRANSFORMATION</div></div></div>
+  <div class="content-card"><div class="content-card-h"><div class="content-num">05</div><div class="content-title">"8 Haftada Hybrid Athlete — Başlangıç vs Şimdi"</div><div class="tag" style="background:rgba(239,68,68,0.15);color:var(--red)">EN ÖNEMLİ</div></div><div class="content-desc">Hafta 8 sonu. Tüm veriler. Cinematic edit. Transformation arc tamamlanıyor. Bu video hesabı uçurabilir.</div><div class="content-tags"><div class="tag" style="background:rgba(245,158,11,0.1);color:var(--yellow)">YOUTUBE</div><div class="tag" style="background:rgba(245,158,11,0.1);color:var(--yellow)">TRANSFORMATION</div></div></div>
+
+  <div class="sec">Haftalık İçerik Takvimi</div>
+  <div class="card">
+    <div class="rule-row"><div class="rule-num">Pzt</div><div><div class="rule-title">Reels — Push Day klibi</div><div class="rule-text">Antrenman sırasında çek. Edit + yayın Salı creator bloğunda.</div></div></div>
+    <div class="rule-row"><div class="rule-num">Sal</div><div><div class="rule-title">Story — Koşu verisi + Reels yayınla</div><div class="rule-text">Apple Watch zone ekranı story. Pazartesi Push Reels'i yayınla.</div></div></div>
+    <div class="rule-row"><div class="rule-num">Çar</div><div><div class="rule-title">YouTube Haftalık Vlog</div><div class="rule-text">Pzt+Sal görüntülerini birleştir. 8-12dk. Çarşamba yayınla.</div></div></div>
+    <div class="rule-row"><div class="rule-num">Per</div><div><div class="rule-title">Reels — Interval set verileri</div><div class="rule-text">Set başı vs son set pace. Zone 3 girişi. Çok iyi performans.</div></div></div>
+    <div class="rule-row"><div class="rule-num">Cum</div><div><div class="rule-title">Carousel — Haftalık veri analizi</div><div class="rule-text">HRV trendi, zone dağılımı, pace gelişimi. En çok kaydedilen format.</div></div></div>
+    <div class="rule-row"><div class="rule-num">Cmt</div><div><div class="rule-title">YouTube yayın + Cinematic Reels</div><div class="rule-text">Long Run Maltepe tepelerinde. Sabah ışığı. Bu haftalık en sinematik içerik.</div></div></div>
+    <div class="rule-row"><div class="rule-num">Paz</div><div><div class="rule-title">Gelecek hafta planı</div><div class="rule-text">Hook fikirleri, çekim listesi, takvim. 45 dk.</div></div></div>
+  </div>
+</div>
+
+<!-- ═══ OKUL SİSTEMİ ═══ -->
+<div class="page" id="page-okul">
+  <div class="ph"><div class="ph-eye">Akademik Sistem</div><div class="ph-title">Okul <em>Dönemi</em></div><div class="ph-sub">Maltepe Üniversitesi · Gemi ve Yat Tasarımı · 2. Sınıf · Tatil bitti uyumu</div></div>
+
+  <div class="alert alert-warn"><strong>Okul dönemi başladığında sistem değişiyor.</strong> Antrenman saatleri korunuyor — 06:45 sabit. Değişen sadece gün içi bloklar. Spor hiçbir zaman derse feda edilmiyor.</div>
+
+  <div class="sec">Okul Dönemi Günlük İskelet</div>
+  <div class="tl">
+    <div class="tl-row"><div class="tl-time">06:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-h">Kalkış + Pre-Workout</div><div class="tl-d">Her gün aynı. İstisna yok.</div></div></div>
+    <div class="tl-row"><div class="tl-time">06:45</div><div class="tl-box"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-h">Antrenman</div><div class="tl-d">Okul var ya da yok — antrenman sabit.</div></div></div>
+    <div class="tl-row"><div class="tl-time">08:30</div><div class="tl-box"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-h">Post-Workout + Hazırlan</div><div class="tl-d">Yoğurt karışımı · Duş · Hazırlanma</div></div></div>
+    <div class="tl-row"><div class="tl-time">09:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-h">Okul Saatleri</div><div class="tl-d">Derse gir. Proje gruplarında aktif ol. Ders aralarında telefon yok — sosyal bağ veya kısa yürüyüş.</div></div></div>
+    <div class="tl-row"><div class="tl-time">Öğleden Sonra</div><div class="tl-box"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-h">Çalışma Bloğu + Creator</div><div class="tl-d">Ders + proje: 90dk blok · Creator: 60-90dk · Ekran süresi aynı kurallar · 21:00 ekran kapanır</div></div></div>
+    <div class="tl-row"><div class="tl-time">22:00</div><div class="tl-box"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-h">Uyku — Değişmez</div><div class="tl-d">Proje yetiştirme bahanesiyle gece geç kalmak yok. Sabah 06:00'a kalkacaksın.</div></div></div>
+  </div>
+
+  <div class="sec">Proje + Ödev Sistemi</div>
+  <div class="card">
+    <div class="rule-row"><div class="rule-num">01</div><div><div class="rule-title">Proje deadline'larını haftalık plana işle</div><div class="rule-text">Her Pazar gelecek hafta planı yaparken deadlineları gör. Son güne bırakma = gece geç kalmak = uyku mahvolur.</div></div></div>
+    <div class="rule-row"><div class="rule-num">02</div><div><div class="rule-title">Çalışma bloğu 90dk + 20dk mola</div><div class="rule-text">Pomodoro değil, ultradian ritim. 90dk odak — 20dk dinlenme. Gemi tasarım projeleri için ideal.</div></div></div>
+    <div class="rule-row"><div class="rule-num">03</div><div><div class="rule-title">Grup projelerinde lider ol — zaman kaybetme</div><div class="rule-text">Grup çalışmaları dağınık olur. Görev dağılımını baştan belirle. Belirsizlik zaman kaybıdır.</div></div></div>
+    <div class="rule-row"><div class="rule-num">04</div><div><div class="rule-title">Creator içerik okul içeriğiyle örtüşebilir</div><div class="rule-text">Gemi tasarımı + hybrid athlete = niş içerik. "Mühendislik öğrencisi hybrid athlete" farklılaştırıcı kimlik.</div></div></div>
+  </div>
+</div>
+
+<!-- ═══ SOSYAL HAYAT ═══ -->
+<div class="page" id="page-social">
+  <div class="ph"><div class="ph-eye">Sosyal Sistem</div><div class="ph-title">Sosyal <em>Hayat</em></div><div class="ph-sub">2 sevgili · 3 yakın arkadaş · Performansı düşürmeden denge</div></div>
+
+  <div class="alert alert-warn">
+    <strong>2 İlişki Yönetimi — Performans Etkisi</strong><br>
+    Seni yargılamıyorum. Ama net söylüyorum: 2 ilişki yönetmek ciddi zihinsel bant genişliği tüketiyor. Duygusal çatışma, karar yorgunluğu, zaman maliyeti. Bu HRV'ni etkiliyor, odak kaliteni düşürüyor. Bunu hesaba katıyorum.
+  </div>
+
+  <div class="sec">Haftalık Sosyal Sistem</div>
+  <div class="card">
+    <div class="rule-row"><div class="rule-num">ARK</div><div><div class="rule-title">Haftada 1 kez — Cuma akşamı veya Pazar</div><div class="rule-text">3 yakın arkadaş. Haftada 1 görüşme yeterli diyorsun — bu doğru. Cuma akşamı Leg Day sonrası veya Pazar serbest zamanında. Saatini belirle: maksimum 3-4 saat.</div></div></div>
+    <div class="rule-row"><div class="rule-num">SEV</div><div><div class="rule-title">Haftada 1-2 kez — planlanmış</div><div class="rule-text">Spontan buluşmalar dikkat dağıtıcı. Haftanın başında planlı olsun. Antrenman ve uyku saatlerine müdahale etmeyen zaman dilimi: öğleden sonra veya akşam yemeği sonrası (20:00-21:00 arası).</div></div></div>
+    <div class="rule-row"><div class="rule-num">KİŞİ</div><div><div class="rule-title">Yalnız zaman blokları koru</div><div class="rule-text">Sosyal enerjin yüksek ama sürekli sosyalleşmek istemiyorsun. Bu kural: günde minimum 2 saat tam yalnız zaman. Odak bloğu bu — telefon kapalı, sosyal yok.</div></div></div>
+    <div class="rule-row"><div class="rule-num">GEÇ</div><div><div class="rule-title">Gece geç sosyal = ertesi gün çöplük</div><div class="rule-text">Geceyarısı buluşmalar, geç dönüşler — HRV düşer, uyku bozulur, antrenman kalitesi düşer. 22:00 yatış kural. Sosyal plan bunu geçemez.</div></div></div>
+  </div>
+
+  <div class="sec">İlişkilerin Performansa Etkisi</div>
+  <div class="card">
+    <div class="rule-row"><div class="rule-num">⚠️</div><div><div class="rule-title">Duygusal çatışma = HRV düşüşü</div><div class="rule-text">Stres, tartışma, belirsizlik — bunlar fizyolojik stres. Ertesi gün HRV'ni gör. Bağlantı nettir.</div></div></div>
+    <div class="rule-row"><div class="rule-num">⚠️</div><div><div class="rule-title">Karar yorgunluğu</div><div class="rule-text">2 ilişki = 2 kat sosyal karar. Bu zihinsel enerji odak bloklarından çalınıyor. Farkında ol.</div></div></div>
+    <div class="rule-row"><div class="rule-num">✓</div><div><div class="rule-title">Sağlıklı sosyal bağ toparlanmayı hızlandırır</div><div class="rule-text">Oksitoksin HRV'yi artırır. Kaliteli sosyal zaman performansa zarar vermez — aksine destekler. Kalite &gt; Miktar.</div></div></div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// Navigation
+function go(id, btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sb-btn').forEach(b=>b.classList.remove('active'));
+  const page = document.getElementById('page-'+id);
+  if(page) page.classList.add('active');
+  if(btn) btn.classList.add('active');
+  else {
+    document.querySelectorAll('.sb-btn').forEach(b=>{
+      if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+id+"'"))
+        b.classList.add('active');
+    });
+  }
+  window.scrollTo(0,0);
+}
+
+// Meal toggle
+function toggleMeal(header){
+  const card = header.closest('.meal');
+  card.classList.toggle('open');
+}
+
+// Option toggle (lunch/dinner)
+function toggleOpt(showId, hideId, btn){
+  document.getElementById(showId).style.display='block';
+  document.getElementById(hideId).style.display='none';
+  const parent = btn.closest('.meal-body');
+  parent.querySelectorAll('button.tag').forEach(b=>{
+    b.style.background='rgba(88,88,122,0.1)';
+    b.style.color='var(--muted)';
+  });
+  btn.style.background='rgba(139,92,246,0.15)';
+  btn.style.color='var(--purple)';
+}
+</script>
+</body>
+</html>
